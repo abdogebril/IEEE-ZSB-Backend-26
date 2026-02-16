@@ -1,0 +1,159 @@
+Database Normalization to 3NF
+
+We start with one messy table(legacy data):
+
+Student_Grade_Report
+(Student_Name, Student_Phone, Student_Address, Course_Title, Instructor_Name, Instructor_Dept, Dept_Building, Grade)
+
+This table has several issues.
+
+-------------------------------------------
+
+Step 1: First Normal Form (1NF)
+
+The Problem (Multi-valued Attribute)
+
+The column Student_Phone sometimes contains more than one phone number in the same cell.
+
+This violates 1NF because:
+In First Normal Form, each cell must contain only one single value (atomic value).
+
+#### The Solution ####
+
+We separate phone numbers into a new table.
+
+Students
+
+Student_ID (PK)
+Student_Name
+Student_Address
+
+Student_Phone
+
+Phone_ID (PK)
+Student_ID (FK)
+Phone_Number
+
+Now:
+
+Each phone number is stored in a separate row.
+
+No cell contains multiple values.
+
+The database satisfies 1NF.
+
+--------------------------------------------
+
+Step 2: Second Normal Form (2NF)
+
+The Problem (Partial Dependency)
+
+If the primary key of the original table is:
+(Student_Name + Course_Title)
+
+Some columns depend only on part of the key.
+
+Example:
+Student_Address depends only on Student_Name, not on Course_Title.
+
+This is called Partial Dependency.
+
+Second Normal Form requires:
+Every non-key column must depend on the entire primary key.
+
+####  The Solution  ####
+
+We divide the table into logical tables.
+
+Students
+
+Student_ID (PK)
+Student_Name
+City
+Street
+Zip
+
+Courses
+
+Course_ID (PK)
+Course_Title
+Student_Course
+Student_ID (FK)
+Course_ID (FK)
+Grade
+
+Now:
+
+Student information depends only on Student_ID.
+
+Course information depends only on Course_ID.
+
+Grade depends on both Student and Course.
+
+The database satisfies 2NF.
+
+
+------------------------------------------------------------
+
+Step 3: Third Normal Form (3NF)
+
+The Problem (Transitive Dependency)
+
+Dept_Building depends on Instructor_Dept.
+
+Instructor_Dept depends on Instructor_Name.
+
+This means Dept_Building does not depend directly on the primary key.
+
+It depends on another non-key column.
+
+This is called Transitive Dependency.
+
+Third Normal Form requires:
+Non-key columns must not depend on other non-key columns.
+
+The Solution ####
+
+We create a separate table for Departments.
+
+Departments
+
+Dept_ID (PK)
+Dept_Name
+Dept_Building
+Instructors
+Instructor_ID (PK)
+Instructor_Name
+Dept_ID (FK)
+
+Courses
+
+Course_ID (PK)
+Course_Title
+Instructor_ID (FK)
+
+Students
+
+Student_ID (PK)
+Student_Name
+City
+Street
+Zip
+
+Student_Phone
+
+Phone_ID (PK)
+Student_ID (FK)
+Phone_Number
+
+Student_Course
+
+Student_ID (FK)
+Course_ID (FK)
+Grade
+
+Final Result
+Now the database:
+✔ Has no multi-valued attributes (1NF)
+✔ Has no partial dependencies (2NF)
+✔ Has no transitive dependencies (3NF)
